@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from products.models import Product
+from core.mixins import SubtotalMixin
 
 
 class Sale(models.Model):
@@ -20,9 +21,69 @@ class Sale(models.Model):
 
     def __str__(self):
         return f"Venda #{self.id} - {self.user.username}"
+    
+    @property
+    def total_value(self):
+        """Calcula o valor total da venda"""
+        return sum(item.subtotal for item in self.items.all())
+    
+    @property
+    def total_items(self):
+        """Retorna o total de itens na venda"""
+        return sum(item.quantity for item in self.items.all())
+    
+    def get_purchase_status(self):
+        """
+        Calcula o status detalhado de compras da venda.
+        Única fonte de verdade para informações de compras.
+        """
+        if not self.items.exists():
+            return {
+                'is_fully_purchased': True,
+                'missing_items': [],
+                'purchase_progress': 100.0,
+                'total_items': 0,
+                'purchased_items': 0
+            }
+        
+        total_items = 0
+        purchased_items = 0
+        missing_items = []
+        is_fully_purchased = True
+        
+        for sale_item in self.items.all():
+            total_items += sale_item.quantity
+            
+            # Calcular quantidade comprada para este produto
+            purchased_qty = 0
+            for purchase in self.purchases.all():
+                for purchase_item in purchase.items.filter(product=sale_item.product):
+                    purchased_qty += purchase_item.quantity
+            
+            purchased_items += purchased_qty
+            
+            if purchased_qty < sale_item.quantity:
+                is_fully_purchased = False
+                missing_items.append({
+                    'product_id': sale_item.product.id,
+                    'product_name': sale_item.product.name,
+                    'required_quantity': sale_item.quantity,
+                    'purchased_quantity': purchased_qty,
+                    'missing_quantity': sale_item.quantity - purchased_qty
+                })
+        
+        purchase_progress = (purchased_items / total_items * 100) if total_items > 0 else 100.0
+        
+        return {
+            'is_fully_purchased': is_fully_purchased,
+            'missing_items': missing_items,
+            'purchase_progress': purchase_progress,
+            'total_items': total_items,
+            'purchased_items': purchased_items
+        }
 
 
-class SaleItem(models.Model):
+class SaleItem(SubtotalMixin, models.Model):
     """
     Modelo que representa um item específico dentro de uma venda.
     
@@ -36,6 +97,7 @@ class SaleItem(models.Model):
     class Meta:
         verbose_name = "Item da Venda"
         verbose_name_plural = "Itens das Vendas"
+        unique_together = ['sale', 'product']
 
     def __str__(self):
         return f"{self.product.name} - Qtd: {self.quantity}"

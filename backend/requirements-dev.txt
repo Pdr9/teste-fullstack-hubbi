@@ -1,0 +1,22 @@
+# Include production requirements
+-r requirements.txt
+
+# Development Tools
+pytest==8.4.1
+pytest-django==4.8.0
+factory-boy==3.3.0
+
+# Code Quality
+flake8==7.0.0
+black==24.10.0
+isort==5.13.2
+
+# Testing
+coverage==7.4.4
+responses==0.13.2
+
+# Debugging
+django-debug-toolbar==4.3.0
+
+# Data Generation
+Faker==37.4.0

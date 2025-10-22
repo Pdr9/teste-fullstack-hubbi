@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from products.models import Product
 from sales.models import Sale
+from core.mixins import SubtotalMixin
 
 
 class Purchase(models.Model):
@@ -24,7 +25,7 @@ class Purchase(models.Model):
         return f"Compra #{self.id} - {self.user.username}"
 
 
-class PurchaseItem(models.Model):
+class PurchaseItem(SubtotalMixin, models.Model):
     """
     Modelo que representa um item específico dentro de uma compra.
     
@@ -38,6 +39,7 @@ class PurchaseItem(models.Model):
     class Meta:
         verbose_name = "Item da Compra"
         verbose_name_plural = "Itens das Compras"
+        unique_together = ['purchase', 'product']
 
     def __str__(self):
         return f"{self.product.name} - Qtd: {self.quantity}"
