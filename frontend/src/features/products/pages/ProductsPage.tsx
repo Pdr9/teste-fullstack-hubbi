@@ -9,7 +9,7 @@ import { Body, Currency, Id, Caption, Label } from '@/shared/components/ui/Typog
 import type { Product } from '../types';
 
 export const ProductsPage: React.FC = () => {
-  // Hook CRUD melhorado - tudo incluído
+  // Hook CRUD
   const {
     data: products,
     loading,
@@ -19,7 +19,7 @@ export const ProductsPage: React.FC = () => {
     openModal,
     closeModal,
     setModalData,
-    handleSubmit, // Função genérica
+    handleSubmit,
     confirmDialog,
     openDeleteConfirm,
     confirmDelete,
@@ -31,7 +31,7 @@ export const ProductsPage: React.FC = () => {
     delete: productService.deleteProduct
   }, { name: '', price: 0 });
 
-  // Carregar dados quando o componente monta
+  // Carrega os dados quando o componente monta
   useEffect(() => {
     load();
   }, [load]);

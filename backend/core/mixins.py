@@ -1,6 +1,3 @@
-"""
-Mixins compartilhados para eliminar duplicação de código.
-"""
 from django.db import models
 from rest_framework import viewsets
 
@@ -17,8 +14,7 @@ class SubtotalMixin:
 
 class CreateSerializerMixin:
     """
-    Mixin para ViewSets que precisam de serializer específico para criação.
-    Elimina duplicação entre SaleViewSet e PurchaseViewSet.
+    Mixin para ViewSets que precisam de serializer específico para criação, utilizado em SaleViewSet e PurchaseViewSet.
     """
     create_serializer_class = None
     custom_serializers = {}  # Para casos especiais como 'with_purchases'
@@ -34,8 +30,7 @@ class CreateSerializerMixin:
 
 class PrefetchMixin:
     """
-    Mixin para ViewSets que precisam de prefetch otimizado.
-    Elimina duplicação de get_queryset com prefetch_related.
+    Mixin para ViewSets que precisam de prefetch otimizado, utilizado em SaleViewSet e PurchaseViewSet.
     """
     prefetch_fields = []
     

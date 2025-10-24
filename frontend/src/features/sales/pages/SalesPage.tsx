@@ -13,7 +13,7 @@ import { Currency, Id, Caption, Body, H4 } from '@/shared/components/ui/Typograp
 import type { CreateSale, CreateItem, Sale } from '../types';
 
 export const SalesPage: React.FC = () => {
-  // Funções estáveis para evitar loops
+  // Funções estáveis para evitar re-renders desnecessários
   const getSalesWithStatus = useCallback(() => saleService.getSales(true), []);
   const getProducts = useCallback(() => productService.getProducts(), []);
   
@@ -33,17 +33,17 @@ export const SalesPage: React.FC = () => {
   // Modal para detalhes usando useModal
   const detailsModal = useModal<{ sale: Sale | null; errors: string }>({ sale: null, errors: '' });
 
-  // Null safety 
-  const salesList = sales || [];
+  // Garantir que sales seja sempre um array
+  const salesList = sales ?? [];
 
   // Carregar dados quando o componente monta
   useEffect(() => {
     loadProducts();
     loadSales();
-  }, []); // Remover dependências que causam loop
+  }, [loadProducts, loadSales]);
 
   const handleSaleSubmit = (e: React.FormEvent) => {
-    // Usar função genérica - backend já valida items obrigatórios
+    // Criar venda com itens e recarregar lista após sucesso
     handleSubmit(e, { items: saleItems }, () => {
       clearItems();
       loadSales();

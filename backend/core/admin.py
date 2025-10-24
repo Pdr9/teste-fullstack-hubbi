@@ -1,6 +1,3 @@
-"""
-Admin base classes e mixins compartilhados.
-"""
 from django.contrib import admin
 
 

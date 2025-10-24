@@ -46,8 +46,7 @@ def create_items_bulk(items_data: List[Dict], item_model, parent_field, parent_i
 
 def create_entity_with_items(entity_model, item_model, parent_field, user, items_data, **kwargs):
     """
-    Função genérica para criar entidades com itens.
-    Substitui o Template Method Pattern complexo por uma função simples.
+    Cria entidades com os itens.
     
     Args:
         entity_model: Model da entidade (Sale ou Purchase)
