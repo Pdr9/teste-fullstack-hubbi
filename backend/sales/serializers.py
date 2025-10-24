@@ -48,18 +48,12 @@ class CreateSaleSerializer(serializers.Serializer):
         )
 
 
-class SaleWithPurchasesSerializer(serializers.ModelSerializer):
+class SaleWithPurchasesSerializer(SaleSerializer):
     """Serializer para venda com compras relacionadas."""
-    items = SaleItemSerializer(many=True, read_only=True)
     purchases = serializers.SerializerMethodField()
-    total_value = serializers.ReadOnlyField()
     
-    class Meta:
-        model = Sale
-        fields = [
-            'id', 'user', 'date', 'items', 'purchases',
-            'total_value'
-        ]
+    class Meta(SaleSerializer.Meta):
+        fields = SaleSerializer.Meta.fields + ['purchases']
     
     def get_purchases(self, obj):
         """Retorna as compras relacionadas à venda."""
@@ -67,20 +61,12 @@ class SaleWithPurchasesSerializer(serializers.ModelSerializer):
         return PurchaseSerializer(obj.purchases.all(), many=True).data
 
 
-class SaleStatusSerializer(serializers.ModelSerializer):
+class SaleStatusSerializer(SaleSerializer):
     """Serializer para venda com status completo de compras."""
-    items = SaleItemSerializer(many=True, read_only=True)
-    total_value = serializers.ReadOnlyField()
-    total_items = serializers.ReadOnlyField()
-    username = serializers.CharField(source='user.username', read_only=True)
     purchase_status = serializers.SerializerMethodField()
     
-    class Meta:
-        model = Sale
-        fields = [
-            'id', 'user', 'username', 'date', 'items',
-            'total_value', 'total_items', 'purchase_status'
-        ]
+    class Meta(SaleSerializer.Meta):
+        fields = SaleSerializer.Meta.fields + ['purchase_status']
     
     def get_purchase_status(self, obj):
         """Retorna o status completo de compras da venda."""

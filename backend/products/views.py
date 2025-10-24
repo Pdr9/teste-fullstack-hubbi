@@ -19,8 +19,6 @@ class ProductViewSet(BaseViewSet):
     def my_products(self, request):
         """
         Retorna produtos criados pelo usuário logado.
-        
-        Endpoint: /api/products/my_products/
         """
         products = Product.objects.filter(user=request.user)
         serializer = self.get_serializer(products, many=True)

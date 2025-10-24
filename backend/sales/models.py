@@ -33,7 +33,7 @@ class Sale(models.Model):
         return sum(item.quantity for item in self.items.all())
     
     def get_purchase_status(self):
-        """Calcula o status de compras da venda de forma simplificada."""
+        """Calcula o status de compras da venda."""
         if not self.items.exists():
             return {
                 'is_fully_purchased': True,

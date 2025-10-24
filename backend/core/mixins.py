@@ -7,8 +7,7 @@ from rest_framework import viewsets
 
 class SubtotalMixin:
     """
-    Mixin para calcular subtotal de itens.
-    Elimina duplicação entre SaleItem e PurchaseItem.
+    Mixin para calcular subtotal de itens de SaleItem e PurchaseItem.
     """
     @property
     def subtotal(self):

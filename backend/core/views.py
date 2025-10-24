@@ -1,6 +1,3 @@
-"""
-ViewSets base compartilhados.
-"""
 from rest_framework import viewsets
 
 

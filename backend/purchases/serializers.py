@@ -2,7 +2,6 @@ from rest_framework import serializers
 from .models import Purchase, PurchaseItem
 from core.services import create_entity_with_items
 from core.serializers import BaseItemSerializer
-from sales.models import Sale
 
 
 class PurchaseItemSerializer(BaseItemSerializer):
@@ -32,18 +31,6 @@ class CreatePurchaseSerializer(serializers.Serializer):
         help_text="Lista de itens com product_id e quantity",
         write_only=True
     )
-    
-    def validate(self, data):
-        """Valida apenas regras críticas de negócio"""
-        sale_id = data.get('sale')
-        
-        # Validar venda existe (única validação crítica)
-        try:
-            Sale.objects.get(id=sale_id)
-        except Sale.DoesNotExist:
-            raise serializers.ValidationError("Venda não encontrada")
-        
-        return data
     
     def create(self, validated_data):
         """Cria compra com itens usando service genérico"""
