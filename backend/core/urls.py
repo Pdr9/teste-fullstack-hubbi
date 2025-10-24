@@ -23,7 +23,7 @@ from rest_framework_simplejwt.views import TokenRefreshView
 from products.views import ProductViewSet
 from sales.views import SaleViewSet
 from purchases.views import PurchaseViewSet
-from core.auth_views import login, refresh_token
+from core.auth_views import login
 
 # Configuração do router para API
 router = DefaultRouter()
@@ -37,6 +37,5 @@ urlpatterns = [
     
     # Autenticação
     path('api/auth/login/', login, name='login'),
-    path('api/auth/refresh/', refresh_token, name='refresh'),
     path('api/auth/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
 ]

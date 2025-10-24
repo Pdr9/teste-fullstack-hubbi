@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, type ReactNode } from 'react';
 import { authService } from '@/features/auth/services/authService';
-import type { User, LoginRequest } from '@/features/auth/types';
+import type { LoginRequest } from '@/features/auth/types';
+import type { User } from '@/shared/types/common';
 
 /**
  * Interface que define o tipo do contexto de autenticação.

@@ -29,7 +29,7 @@ export const authService = {
    * Retorna novo token de acesso.
    */
   async refreshToken(data: RefreshTokenRequest): Promise<RefreshTokenResponse> {
-    return apiClient.post('/auth/refresh/', data).then(r => r.data);
+    return apiClient.post('/auth/token/refresh/', data).then(r => r.data);
   },
 
   /**

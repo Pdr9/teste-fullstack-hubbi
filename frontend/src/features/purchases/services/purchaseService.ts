@@ -13,7 +13,7 @@ export const purchaseService = {
    * Retorna lista completa de compras com detalhes.
    */
   async getPurchases(): Promise<Purchase[]> {
-    return apiClient.get('/purchases/').then(r => r.data);
+    return apiClient.get('/purchases/').then(r => r.data.results || r.data);
   },
 
   /**

@@ -48,8 +48,11 @@ export const handleError = (err: unknown): string => {
  */
 export const extractErrorMessage = (err: unknown): string => {
   if (err instanceof Error) return err.message;
-  if (typeof err === 'object' && err?.response?.data?.message) {
-    return err.response.data.message;
+  if (typeof err === 'object' && err !== null && 'response' in err) {
+    const errorWithResponse = err as { response?: { data?: { message?: string } } };
+    if (errorWithResponse.response?.data?.message) {
+      return errorWithResponse.response.data.message;
+    }
   }
   return 'Erro desconhecido';
 };

@@ -14,7 +14,9 @@ export const saleService = {
    */
   async getSales(withStatus = false): Promise<Sale[]> {
     const endpoint = withStatus ? '/sales/with_status/' : '/sales/';
-    return apiClient.get(endpoint).then(r => r.data);
+    const response = await apiClient.get(endpoint);
+    // Extrair o array results da resposta paginada
+    return response.data.results || response.data;
   },
 
   /**

@@ -20,6 +20,10 @@ export const PurchasesPage: React.FC = () => {
   const { data: products, load: loadProducts } = useDataLoader(productService.getProducts);
   const { items: purchaseItems, addItem, removeItem, updateItem, clearItems } = useItemManager<CreateItem>([]);
   
+  // Os serviços retornam arrays diretamente
+  const salesList = Array.isArray(sales) ? sales : [];
+  const purchasesList = Array.isArray(purchases) ? purchases : [];
+  
   // Modal para criação de compras
   const createModal = useModal<{ selectedSale: Sale | null; errors: string }>({ selectedSale: null, errors: '' });
   
@@ -37,7 +41,7 @@ export const PurchasesPage: React.FC = () => {
     if (!createModal.modal.data.selectedSale) return;
     
     // Produtos da venda que ainda não foram adicionados
-    const saleProductIds = createModal.modal.data.selectedSale.items.map((item: any) => item.product.id);
+    const saleProductIds = createModal.modal.data.selectedSale.items?.map((item) => item.product.id) || [];
     const saleProducts = products?.filter(p => saleProductIds.includes(p.id)) || [];
     const addedProductIds = purchaseItems.map(item => item.product_id);
     const availableProducts = saleProducts.filter(p => !addedProductIds.includes(p.id));
@@ -70,7 +74,7 @@ export const PurchasesPage: React.FC = () => {
   // Funções inline para produtos (KISS - Keep It Simple)
   const getSaleProducts = () => {
     if (!createModal.modal.data.selectedSale || !products) return [];
-    const saleProductIds = createModal.modal.data.selectedSale.items.map((item: any) => item.product.id);
+    const saleProductIds = createModal.modal.data.selectedSale.items?.map((item) => item.product.id) || [];
     return products.filter(p => saleProductIds.includes(p.id));
   };
 
@@ -81,19 +85,19 @@ export const PurchasesPage: React.FC = () => {
   };
 
   const getAvailableQuantity = useCallback((productId: number) => {
-    if (!createModal.modal.data.selectedSale || !purchases) return 0;
+    if (!createModal.modal.data.selectedSale || !purchasesList) return 0;
     
     // Buscar quantidade necessária na venda
-    const saleItem = createModal.modal.data.selectedSale.items.find((item: any) => item.product.id === productId);
+    const saleItem = createModal.modal.data.selectedSale.items.find((item) => item.product.id === productId);
     if (!saleItem) return 0;
     
     const requiredQuantity = saleItem.quantity;
     
     // Calcular quantidade já comprada
     let purchasedQuantity = 0;
-    purchases.forEach(purchase => {
+    purchasesList.forEach((purchase: Purchase) => {
       if (purchase.sale === createModal.modal.data.selectedSale!.id) {
-        purchase.items.forEach(item => {
+        purchase.items.forEach((item) => {
           if (item.product.id === productId) {
             purchasedQuantity += item.quantity;
           }
@@ -102,7 +106,15 @@ export const PurchasesPage: React.FC = () => {
     });
     
     return Math.max(0, requiredQuantity - purchasedQuantity);
-  }, [createModal.modal.data.selectedSale, purchases]);
+  }, [createModal.modal.data.selectedSale, purchasesList]);
+
+  // Verificar se há itens válidos para compra
+  const hasValidItemsToPurchase = useCallback(() => {
+    if (!createModal.modal.data.selectedSale) return false;
+    
+    const saleProducts = getSaleProducts();
+    return saleProducts.some(product => getAvailableQuantity(product.id) > 0);
+  }, [createModal.modal.data.selectedSale, getSaleProducts, getAvailableQuantity]);
 
 
   return (
@@ -115,9 +127,9 @@ export const PurchasesPage: React.FC = () => {
         loading={loading}
         error={error}
       >
-      {purchases && purchases.length > 0 && (
+      {purchasesList && purchasesList.length > 0 && (
         <Table
-          data={purchases}
+          data={purchasesList}
           columns={[
             {
               key: 'id',
@@ -160,7 +172,7 @@ export const PurchasesPage: React.FC = () => {
                     {formatCurrency(purchase.total_value)}
                   </Currency>
                   <Caption className="text-gray-500 text-xs">
-                    {purchase.total_items} itens
+                    {purchase.items?.length || 0} itens
                   </Caption>
                 </div>
               )
@@ -168,7 +180,7 @@ export const PurchasesPage: React.FC = () => {
             {
               key: 'actions',
               label: 'Ações',
-              render: (_, purchase) => (
+              render: (_, purchase: Purchase) => (
                 <ActionButtons
                   onView={() => {
                     detailsModal.openModal();
@@ -197,7 +209,7 @@ export const PurchasesPage: React.FC = () => {
               value={createModal.modal.data.selectedSale?.id || 0}
               onChange={(e) => {
                 const saleId = parseInt(e.target.value);
-                const sale = sales?.find(s => s.id === saleId);
+                const sale = salesList.find(s => s.id === saleId);
                 createModal.setModalData({ 
                   selectedSale: sale || null, 
                   errors: '' 
@@ -206,7 +218,7 @@ export const PurchasesPage: React.FC = () => {
               }}
             >
               <option value={0}>Selecione uma venda</option>
-              {sales?.map((sale) => (
+              {salesList.map((sale: Sale) => (
                 <option key={sale.id} value={sale.id}>
                   Venda #{sale.id} - {formatCurrency(sale.total_value)}
                 </option>
@@ -218,7 +230,7 @@ export const PurchasesPage: React.FC = () => {
             <div className="bg-gray-50 p-3 rounded-md">
               <H4 className="mb-2">Itens da Venda:</H4>
               <div className="space-y-1">
-                {createModal.modal.data.selectedSale.items.map((item: any) => (
+                {createModal.modal.data.selectedSale.items?.map((item) => (
                   <div key={item.id} className="flex justify-between">
                     <Body>{item.product.name}</Body>
                     <Caption>x{item.quantity}</Caption>
@@ -241,6 +253,7 @@ export const PurchasesPage: React.FC = () => {
           <ModalFooter
             onCancel={createModal.closeModal}
             submitLabel="Criar Compra"
+            submitDisabled={!hasValidItemsToPurchase()}
           />
         </form>
       </Modal>
@@ -276,7 +289,7 @@ export const PurchasesPage: React.FC = () => {
                 </div>
                 <div>
                   <Caption className="text-gray-500">Total de Itens</Caption>
-                  <div><Body>{detailsModal.modal.data.purchase.total_items} itens</Body></div>
+                  <div><Body>{detailsModal.modal.data.purchase.items?.length || 0} itens</Body></div>
                 </div>
                 <div>
                   <Caption className="text-gray-500">Valor Total</Caption>

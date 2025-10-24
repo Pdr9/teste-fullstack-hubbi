@@ -8,7 +8,8 @@ import { Button } from './Button';
 export const ModalFooter: React.FC<{
   onCancel: () => void;
   submitLabel: string;
-}> = ({ onCancel, submitLabel }) => {
+  submitDisabled?: boolean;
+}> = ({ onCancel, submitLabel, submitDisabled = false }) => {
   return (
     <div className="flex justify-end space-x-2">
       <button
@@ -18,7 +19,7 @@ export const ModalFooter: React.FC<{
       >
         Cancelar
       </button>
-      <Button type="submit">{submitLabel}</Button>
+      <Button type="submit" disabled={submitDisabled}>{submitLabel}</Button>
     </div>
   );
 };
