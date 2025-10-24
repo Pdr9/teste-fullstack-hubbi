@@ -1,15 +1,13 @@
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from core.views import BaseViewSet
+from rest_framework.viewsets import ModelViewSet
 from core.mixins import CreateSerializerMixin, PrefetchMixin
 from .models import Sale
 from .serializers import SaleSerializer, CreateSaleSerializer, SaleWithPurchasesSerializer, SaleStatusSerializer
 
 
-class SaleViewSet(CreateSerializerMixin, PrefetchMixin, BaseViewSet):
-    """
-    ViewSet para gerenciar vendas.
-    """
+class SaleViewSet(CreateSerializerMixin, PrefetchMixin, ModelViewSet):
+    """ViewSet para gerenciar vendas."""
     queryset = Sale.objects.all()
     serializer_class = SaleSerializer
     create_serializer_class = CreateSaleSerializer
@@ -21,22 +19,14 @@ class SaleViewSet(CreateSerializerMixin, PrefetchMixin, BaseViewSet):
     
     @action(detail=True, methods=['get'])
     def with_purchases(self, request, pk=None):
-        """
-        Retorna uma venda com todas as compras relacionadas.
-        
-        Endpoint: /api/sales/{id}/with_purchases/
-        """
+        """Retorna uma venda com todas as compras relacionadas."""
         sale = self.get_object()
         serializer = SaleWithPurchasesSerializer(sale)
         return Response(serializer.data)
     
-    @action(detail=True, methods=['get'])
-    def status(self, request, pk=None):
-        """
-        Retorna o status completo de compras de uma venda.
-        
-        Endpoint: /api/sales/{id}/status/
-        """
-        sale = self.get_object()
-        serializer = SaleStatusSerializer(sale)
+    @action(detail=False, methods=['get'])
+    def with_status(self, request):
+        """Retorna todas as vendas com seus status de compra."""
+        sales = self.get_queryset()
+        serializer = SaleStatusSerializer(sales, many=True)
         return Response(serializer.data)

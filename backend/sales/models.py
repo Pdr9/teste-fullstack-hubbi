@@ -33,50 +33,32 @@ class Sale(models.Model):
         return sum(item.quantity for item in self.items.all())
     
     def get_purchase_status(self):
-        """
-        Calcula o status detalhado de compras da venda.
-        Única fonte de verdade para informações de compras.
-        """
+        """Calcula o status de compras da venda de forma simplificada."""
         if not self.items.exists():
             return {
                 'is_fully_purchased': True,
-                'missing_items': [],
                 'purchase_progress': 100.0,
                 'total_items': 0,
                 'purchased_items': 0
             }
         
-        total_items = 0
+        total_items = sum(item.quantity for item in self.items.all())
         purchased_items = 0
-        missing_items = []
-        is_fully_purchased = True
         
+        # Calcular quantidade comprada para cada produto
         for sale_item in self.items.all():
-            total_items += sale_item.quantity
-            
-            # Calcular quantidade comprada para este produto
-            purchased_qty = 0
-            for purchase in self.purchases.all():
-                for purchase_item in purchase.items.filter(product=sale_item.product):
-                    purchased_qty += purchase_item.quantity
-            
+            purchased_qty = sum(
+                purchase_item.quantity 
+                for purchase in self.purchases.all()
+                for purchase_item in purchase.items.filter(product=sale_item.product)
+            )
             purchased_items += purchased_qty
-            
-            if purchased_qty < sale_item.quantity:
-                is_fully_purchased = False
-                missing_items.append({
-                    'product_id': sale_item.product.id,
-                    'product_name': sale_item.product.name,
-                    'required_quantity': sale_item.quantity,
-                    'purchased_quantity': purchased_qty,
-                    'missing_quantity': sale_item.quantity - purchased_qty
-                })
         
         purchase_progress = (purchased_items / total_items * 100) if total_items > 0 else 100.0
+        is_fully_purchased = purchased_items >= total_items
         
         return {
             'is_fully_purchased': is_fully_purchased,
-            'missing_items': missing_items,
             'purchase_progress': purchase_progress,
             'total_items': total_items,
             'purchased_items': purchased_items

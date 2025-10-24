@@ -11,11 +11,12 @@ class Product(models.Model):
     name = models.CharField(max_length=200, help_text="Nome do produto")
     price = models.DecimalField(max_digits=10, decimal_places=2, help_text="Preço do produto em reais")
     user = models.ForeignKey(User, on_delete=models.CASCADE, help_text="Usuário que criou o produto")
+    created_at = models.DateTimeField(auto_now_add=True, help_text="Data de criação do produto")
 
     class Meta:
         verbose_name = "Produto"
         verbose_name_plural = "Produtos"
-        ordering = ['name']
+        ordering = ['-created_at']
 
     def __str__(self):
         return f"{self.name} - R$ {self.price}"

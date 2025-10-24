@@ -23,6 +23,16 @@ class Purchase(models.Model):
 
     def __str__(self):
         return f"Compra #{self.id} - {self.user.username}"
+    
+    @property
+    def total_value(self):
+        """Calcula o valor total da compra"""
+        return sum(item.subtotal for item in self.items.all())
+    
+    @property
+    def total_items(self):
+        """Retorna o total de itens na compra"""
+        return sum(item.quantity for item in self.items.all())
 
 
 class PurchaseItem(SubtotalMixin, models.Model):

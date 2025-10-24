@@ -13,7 +13,7 @@ class ProductViewSet(BaseViewSet):
     
     def get_queryset(self):
         """Retorna produtos do usuário logado"""
-        return Product.objects.filter(user=self.request.user).order_by('name')
+        return Product.objects.filter(user=self.request.user)
     
     @action(detail=False, methods=['get'])
     def my_products(self, request):
@@ -22,6 +22,6 @@ class ProductViewSet(BaseViewSet):
         
         Endpoint: /api/products/my_products/
         """
-        products = Product.objects.filter(user=request.user).order_by('name')
+        products = Product.objects.filter(user=request.user)
         serializer = self.get_serializer(products, many=True)
         return Response(serializer.data)

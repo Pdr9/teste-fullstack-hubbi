@@ -6,15 +6,10 @@ class ProductSerializer(serializers.ModelSerializer):
     """
     Serializer para produtos.
     """
+    username = serializers.CharField(source='user.username', read_only=True)
+    
     class Meta:
         model = Product
-        fields = ['id', 'name', 'price', 'user']
-        read_only_fields = ['user']
-    
-    def validate_price(self, value):
-        """
-        Valida se o preço é positivo.
-        """
-        if value <= 0:
-            raise serializers.ValidationError("O preço deve ser maior que zero")
-        return value
+        fields = ['id', 'name', 'price', 'user', 'username', 'created_at']
+        read_only_fields = ['user', 'username', 'created_at']
+

@@ -17,11 +17,31 @@ django-environ==0.10.0
 gunicorn==21.2.0
 whitenoise==6.6.0
 
-# Optional: API Documentation
+# API Documentation
 drf-spectacular==0.27.0
 
-# Optional: Authentication
+# Authentication
 djangorestframework-simplejwt==5.3.0
 
-# Optional: CORS for frontend integration
+# CORS for frontend integration
 django-cors-headers==4.7.0
+
+# Development Tools
+pytest==8.4.1
+pytest-django==4.8.0
+factory-boy==3.3.0
+
+# Code Quality
+flake8==7.0.0
+black==24.10.0
+isort==5.13.2
+
+# Testing
+coverage==7.4.4
+responses==0.13.2
+
+# Debugging
+django-debug-toolbar==4.3.0
+
+# Data Generation
+Faker==37.4.0

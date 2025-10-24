@@ -22,9 +22,6 @@ def create_items_bulk(items_data: List[Dict], item_model, parent_field, parent_i
     Returns:
         list: Lista de itens criados
     """
-    if not items_data:
-        raise ValidationError("Deve ter pelo menos um item")
-    
     # Buscar produtos de uma vez
     product_ids = [item['product_id'] for item in items_data]
     products = {p.id: p for p in Product.objects.filter(id__in=product_ids)}

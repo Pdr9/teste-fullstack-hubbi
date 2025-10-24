@@ -1,106 +1,55 @@
 from rest_framework import serializers
 from .models import Sale, SaleItem
-from .services import create_sale_with_items
-from core.serializers import BaseItemSerializer, BaseCreateWithItemsSerializer, validate_items_structure
-from products.models import Product
+from core.services import create_entity_with_items
+from core.serializers import BaseItemSerializer
 
 
 class SaleItemSerializer(BaseItemSerializer):
-    """
-    Serializer para itens de venda.
-    Herda toda a estrutura de BaseItemSerializer.
-    """
+    """Serializer para itens de venda."""
     class Meta(BaseItemSerializer.Meta):
         model = SaleItem
 
 
 class SaleSerializer(serializers.ModelSerializer):
-    """
-    Serializer para vendas.
-    """
+    """Serializer para vendas."""
     items = SaleItemSerializer(many=True, read_only=True)
     total_value = serializers.ReadOnlyField()
     total_items = serializers.ReadOnlyField()
+    username = serializers.CharField(source='user.username', read_only=True)
     
     class Meta:
         model = Sale
         fields = [
-            'id', 'user', 'date', 'items', 
+            'id', 'user', 'username', 'date', 'items', 
             'total_value', 'total_items'
         ]
-        read_only_fields = ['user', 'date']
+        read_only_fields = ['user', 'username', 'date']
 
 
-class CreateSaleSerializer(BaseCreateWithItemsSerializer):
-    """
-    Serializer para criação de vendas com itens.
-    Herda BaseCreateWithItemsSerializer aplicando Template Method Pattern.
-    """
-    # Campos de resposta (read-only)
-    user = serializers.PrimaryKeyRelatedField(read_only=True)
-    created_items = serializers.SerializerMethodField()
-    total_value = serializers.ReadOnlyField()
-    total_items = serializers.ReadOnlyField()
+class CreateSaleSerializer(serializers.Serializer):
+    """Serializer para criação de vendas com itens."""
+    items = serializers.ListField(
+        child=serializers.DictField(),
+        help_text="Lista de itens com product_id e quantity",
+        write_only=True
+    )
     
-    class Meta:
-        model = Sale
-        fields = [
-            'id', 'user', 'date', 'created_items',
-            'total_value', 'total_items'
-        ]
-        read_only_fields = ['user', 'date', 'created_items']
-    
-    def get_service(self):
-        """Retorna o método de criação do SaleService"""
-        return create_sale_with_items
-    
-    def to_representation(self, instance):
-        """
-        Controla a serialização manualmente para resolver problemas do DRF.
-        Necessário devido a limitações na serialização automática de objetos complexos.
-        """
-        data = {
-            'id': instance.id,
-            'user': instance.user.id,
-            'date': instance.date,
-            'created_items': self.get_created_items(instance),
-            'total_value': instance.total_value,
-            'total_items': instance.total_items
-        }
-        return data
-    
-    def get_created_items(self, obj):
-        """Retorna os itens criados serializados"""
-        return SaleItemSerializer(obj.items.all(), many=True).data
-    
-    def validate_items(self, value):
-        """Valida estrutura e existência dos produtos"""
-        # Primeiro valida a estrutura básica
-        value = validate_items_structure(value)
+    def create(self, validated_data):
+        """Cria venda com itens usando service genérico"""
+        user = self.context['request'].user
+        items = validated_data['items']
         
-        # Valida quantidade positiva
-        for item in value:
-            if item['quantity'] <= 0:
-                raise serializers.ValidationError("Quantidade deve ser maior que zero")
-        
-        # Depois valida se os produtos existem e pertencem ao usuário
-        product_ids = [item['product_id'] for item in value]
-        user_products = Product.objects.filter(
-            id__in=product_ids, 
-            user=self.context['request'].user
-        ).values_list('id', flat=True)
-        
-        for item in value:
-            if item['product_id'] not in user_products:
-                raise serializers.ValidationError(f"Produto com ID {item['product_id']} não encontrado ou não pertence ao usuário")
-        
-        return value
+        return create_entity_with_items(
+            entity_model=Sale,
+            item_model=SaleItem,
+            parent_field='sale',
+            user=user,
+            items_data=items
+        )
 
 
 class SaleWithPurchasesSerializer(serializers.ModelSerializer):
-    """
-    Serializer para venda com compras relacionadas.
-    """
+    """Serializer para venda com compras relacionadas."""
     items = SaleItemSerializer(many=True, read_only=True)
     purchases = serializers.SerializerMethodField()
     total_value = serializers.ReadOnlyField()
@@ -113,33 +62,26 @@ class SaleWithPurchasesSerializer(serializers.ModelSerializer):
         ]
     
     def get_purchases(self, obj):
-        """
-        Retorna as compras relacionadas à venda.
-        Import lazy para evitar circular import.
-        """
+        """Retorna as compras relacionadas à venda."""
         from purchases.serializers import PurchaseSerializer
         return PurchaseSerializer(obj.purchases.all(), many=True).data
 
 
 class SaleStatusSerializer(serializers.ModelSerializer):
-    """
-    Serializer para venda com status completo de compras.
-    Única fonte de informações detalhadas sobre compras.
-    """
+    """Serializer para venda com status completo de compras."""
     items = SaleItemSerializer(many=True, read_only=True)
     total_value = serializers.ReadOnlyField()
     total_items = serializers.ReadOnlyField()
+    username = serializers.CharField(source='user.username', read_only=True)
     purchase_status = serializers.SerializerMethodField()
     
     class Meta:
         model = Sale
         fields = [
-            'id', 'user', 'date', 'items',
+            'id', 'user', 'username', 'date', 'items',
             'total_value', 'total_items', 'purchase_status'
         ]
     
     def get_purchase_status(self, obj):
-        """
-        Retorna o status completo de compras da venda.
-        """
+        """Retorna o status completo de compras da venda."""
         return obj.get_purchase_status()
