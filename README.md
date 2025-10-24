@@ -11,19 +11,19 @@ Sistema full-stack para gestão de vendas e compras. Desenvolvido com Django RES
 
 ```mermaid
 graph TB
-    subgraph Frontend["Frontend Layer"]
+    subgraph Frontend
         A[React + TypeScript]
         B[Tailwind CSS]
         C[Axios HTTP Client]
     end
     
-    subgraph Backend["Backend Layer"]
+    subgraph Backend
         D[Django REST Framework]
         E[JWT Authentication]
         F[PostgreSQL Database]
     end
     
-    subgraph Infrastructure["Infrastructure Layer"]
+    subgraph Infrastructure
         G[Docker Compose]
         H[PostgreSQL Container]
         I[Backend Container]
@@ -95,7 +95,7 @@ erDiagram
     Product ||--o{ PurchaseItem : "used in"
     
     Sale ||--o{ SaleItem : contains
-    Sale ||--o{ Purchase : "generates"
+    Sale ||--o{ Purchase : generates
     
     Purchase ||--o{ PurchaseItem : contains
     
