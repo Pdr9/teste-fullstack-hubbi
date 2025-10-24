@@ -33,10 +33,11 @@ graph TB
     A --> C
     C --> D
     D --> E
-    D --> F
+    E --> F
     G --> H
     G --> I
     G --> J
+    H --> F
     I --> D
     J --> A
 ```
