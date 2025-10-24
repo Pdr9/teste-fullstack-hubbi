@@ -148,6 +148,10 @@ class ProductViewSetTest(APITestCase):
             'price': '99.99'
         }
     
+    def tearDown(self):
+        """Limpeza após cada teste."""
+        Product.objects.filter(user=self.user).delete()
+    
     def test_create_product_authenticated(self):
         """Testa criação de produto com usuário autenticado."""
         url = reverse('product-list')
@@ -189,7 +193,7 @@ class ProductViewSetTest(APITestCase):
         response = self.client.get(url)
         
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.data), 2)
+        self.assertEqual(len(response.data['results']), 2)
     
     def test_retrieve_product(self):
         """Testa busca de produto específico."""

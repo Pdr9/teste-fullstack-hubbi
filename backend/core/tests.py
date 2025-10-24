@@ -62,7 +62,7 @@ class AuthenticationTest(APITestCase):
         """Testa refresh token com token válido."""
         refresh = RefreshToken.for_user(self.user)
         
-        url = reverse('refresh')
+        url = reverse('token_refresh')
         data = {
             'refresh': str(refresh)
         }
@@ -74,7 +74,7 @@ class AuthenticationTest(APITestCase):
     
     def test_refresh_token_invalid(self):
         """Testa refresh token com token inválido."""
-        url = reverse('refresh')
+        url = reverse('token_refresh')
         data = {
             'refresh': 'invalid_token'
         }
