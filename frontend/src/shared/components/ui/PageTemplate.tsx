@@ -27,12 +27,12 @@ export const PageTemplate: React.FC<PageTemplateProps> = ({
 }) => {
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
           <H1>{title}</H1>
           <Body className="mt-2 text-gray-600">{description}</Body>
         </div>
-        {actionLabel && <Button onClick={onAction}>{actionLabel}</Button>}
+        {actionLabel && <Button onClick={onAction} className="w-full sm:w-auto">{actionLabel}</Button>}
       </div>
       
       {loading && <Loading />}

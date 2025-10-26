@@ -21,16 +21,16 @@ export const ConfirmDialog: React.FC<{
       size="sm"
     >
       <Body className="text-gray-600 mb-4">{message}</Body>
-      <div className="flex justify-end space-x-2">
+      <div className="flex flex-col sm:flex-row justify-end gap-2 sm:space-x-2">
         <button 
           onClick={onClose} 
-          className="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300"
+          className="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 w-full sm:w-auto"
         >
           Cancelar
         </button>
         <button 
           onClick={onConfirm} 
-          className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700"
+          className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 w-full sm:w-auto"
         >
           Confirmar
         </button>

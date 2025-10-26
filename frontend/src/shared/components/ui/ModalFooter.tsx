@@ -11,15 +11,15 @@ export const ModalFooter: React.FC<{
   submitDisabled?: boolean;
 }> = ({ onCancel, submitLabel, submitDisabled = false }) => {
   return (
-    <div className="flex justify-end space-x-2">
+    <div className="flex flex-col sm:flex-row justify-end gap-2 sm:space-x-2">
       <button
         type="button"
-        className="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300"
+        className="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 w-full sm:w-auto"
         onClick={onCancel}
       >
         Cancelar
       </button>
-      <Button type="submit" disabled={submitDisabled}>{submitLabel}</Button>
+      <Button type="submit" disabled={submitDisabled} className="w-full sm:w-auto">{submitLabel}</Button>
     </div>
   );
 };

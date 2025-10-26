@@ -31,19 +31,14 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
       <header className="bg-white shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4">
           <div className="flex justify-between items-center h-16">
-            <a href="/">
-              <H2>Django + React</H2>
-            </a>
-            
             <div className="flex items-center space-x-8">
               <Navigation items={navigationItems} currentPath={location.pathname} />
-
-              <div className="flex items-center space-x-4">
-                <Caption>Olá, {user?.username}</Caption>
-                <Button onClick={logout}>
-                  Sair
-                </Button>
-              </div>
+            </div>
+            
+            <div className="flex items-center space-x-4">
+              <Button onClick={logout}>
+                Sair
+              </Button>
             </div>
           </div>
         </div>
