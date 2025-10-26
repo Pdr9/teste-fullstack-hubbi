@@ -7,6 +7,7 @@ import { HomePage } from '@/features/auth/pages/HomePage';
 import { ProductsPage } from '@/features/products/pages/ProductsPage';
 import { SalesPage } from '@/features/sales/pages/SalesPage';
 import { PurchasesPage } from '@/features/purchases/pages/PurchasesPage';
+import { DashboardPage } from '@/features/dashboard';
 import { LoginPage } from '@/features/auth/pages/LoginPage';
 import '@/style.css';
 
@@ -35,6 +36,12 @@ const AppRoutes: React.FC = () => {
       <Route path="/" element={
         <ProtectedRoute>
           <HomePage />
+        </ProtectedRoute>
+      } />
+      
+      <Route path="/dashboard" element={
+        <ProtectedRoute>
+          <DashboardPage />
         </ProtectedRoute>
       } />
       

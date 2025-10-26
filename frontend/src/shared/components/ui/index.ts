@@ -8,6 +8,11 @@ export * from './PageTemplate';
 export * from './Table';
 export * from './TableSkeleton';
 export * from './EmptyState';
+export * from './MetricCard';
+export * from './MetricCardSkeleton';
+export * from './SimpleChart';
+export * from './SimpleChartSkeleton';
+export * from './LogoutIcon';
 export * from './Typography';
 
 // Componentes de Formulário

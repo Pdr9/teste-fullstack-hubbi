@@ -2,6 +2,7 @@ import React from 'react';
 import { useLocation } from 'react-router-dom';
 import { useAuth } from '@/shared/contexts';
 import { Button } from '../ui/Button';
+import { LogoutIcon } from '../ui/LogoutIcon';
 import { Navigation } from './Navigation';
 import { H2, Caption } from '../ui/Typography';
 
@@ -21,6 +22,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
    * Itens do menu de navegação principal.
    */
   const navigationItems = [
+    { name: 'Dashboard', href: '/dashboard' },
     { name: 'Produtos', href: '/products' },
     { name: 'Vendas', href: '/sales' },
     { name: 'Compras', href: '/purchases' },
@@ -31,13 +33,14 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
       <header className="bg-white shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4">
           <div className="flex justify-between items-center h-16">
-            <div className="flex items-center space-x-8">
+            <div className="flex items-center space-x-2 sm:space-x-8">
               <Navigation items={navigationItems} currentPath={location.pathname} />
             </div>
             
-            <div className="flex items-center space-x-4">
-              <Button onClick={logout}>
-                Sair
+            <div className="flex items-center space-x-2 sm:space-x-4">
+              <Button onClick={logout} className="flex items-center gap-2">
+                <LogoutIcon className="sm:hidden" />
+                <span className="hidden sm:inline">Sair</span>
               </Button>
             </div>
           </div>
