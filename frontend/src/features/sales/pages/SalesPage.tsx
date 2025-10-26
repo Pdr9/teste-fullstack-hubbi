@@ -1,6 +1,6 @@
 import React, { useEffect, useCallback } from 'react';
 import { Layout } from '@/shared/components/layout/Layout';
-import { PageTemplate, Table, ModalFooter, ItemForm, ErrorDisplay, ActionButtons } from '@/shared/components/ui';
+import { PageTemplate, Table, ModalFooter, ItemForm, ErrorDisplay, ActionButtons, TableSkeleton, EmptyState } from '@/shared/components/ui';
 import { Modal } from '@/shared/components/forms/Form';
 import { useCrudPage } from '@/shared/hooks';
 import { useDataLoader } from '@/shared/hooks';
@@ -57,10 +57,12 @@ export const SalesPage: React.FC = () => {
         description="Gerencie suas vendas"
         actionLabel="Nova Venda"
         onAction={() => openModal()}
-        loading={loading}
+        loading={false}
         error={error}
       >
-      {salesList.length > 0 && (
+        {loading ? (
+          <TableSkeleton rows={5} columns={6} />
+        ) : salesList.length > 0 ? (
         <Table
           data={salesList}
           columns={[
@@ -147,7 +149,14 @@ export const SalesPage: React.FC = () => {
             }
           ]}
         />
-      )}
+        ) : (
+          <EmptyState
+            title="Nenhuma venda encontrada"
+            description="Comece criando sua primeira venda."
+            actionLabel="Criar Primeira Venda"
+            onAction={() => openModal()}
+          />
+        )}
 
       <Modal
         isOpen={modal.isOpen}

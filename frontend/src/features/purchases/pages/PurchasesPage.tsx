@@ -1,6 +1,6 @@
 import React, { useEffect, useCallback } from 'react';
 import { Layout } from '@/shared/components/layout/Layout';
-import { PageTemplate, Table, ModalFooter, ItemForm, ErrorDisplay, ActionButtons } from '@/shared/components/ui';
+import { PageTemplate, Table, ModalFooter, ItemForm, ErrorDisplay, ActionButtons, TableSkeleton, EmptyState } from '@/shared/components/ui';
 import { Modal } from '@/shared/components/forms/Form';
 import { Select } from '@/shared/components/forms/Form';
 import { useDataLoader } from '@/shared/hooks';
@@ -124,10 +124,12 @@ export const PurchasesPage: React.FC = () => {
         description="Gerencie suas compras para atender vendas"
         actionLabel="Nova Compra"
         onAction={() => createModal.openModal()}
-        loading={loading}
+        loading={false}
         error={error}
       >
-      {purchasesList && purchasesList.length > 0 && (
+        {loading ? (
+          <TableSkeleton rows={5} columns={6} />
+        ) : purchasesList && purchasesList.length > 0 ? (
         <Table
           data={purchasesList}
           columns={[
@@ -191,7 +193,14 @@ export const PurchasesPage: React.FC = () => {
             }
           ]}
         />
-      )}
+        ) : (
+          <EmptyState
+            title="Nenhuma compra encontrada"
+            description="Comece criando sua primeira compra."
+            actionLabel="Criar Primeira Compra"
+            onAction={() => createModal.openModal()}
+          />
+        )}
 
       <Modal
         isOpen={createModal.modal.isOpen}

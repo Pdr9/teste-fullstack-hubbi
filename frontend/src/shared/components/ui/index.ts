@@ -6,6 +6,8 @@ export * from './ConfirmDialog';
 export * from './ModalFooter';
 export * from './PageTemplate';
 export * from './Table';
+export * from './TableSkeleton';
+export * from './EmptyState';
 export * from './Typography';
 
 // Componentes de Formulário

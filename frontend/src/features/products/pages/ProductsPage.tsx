@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { Layout } from '@/shared/components/layout/Layout';
-import { PageTemplate, Table, ConfirmDialog, ActionButtons, ModalFooter, ErrorDisplay } from '@/shared/components/ui';
+import { PageTemplate, Table, ConfirmDialog, ActionButtons, ModalFooter, ErrorDisplay, TableSkeleton, EmptyState } from '@/shared/components/ui';
 import { Modal, Input } from '@/shared/components/forms/Form';
 import { useCrudPage } from '@/shared/hooks';
 import { productService } from '../services/productService';
@@ -45,10 +45,12 @@ export const ProductsPage: React.FC = () => {
         description="Gerencie seu catálogo de produtos"
         actionLabel="Novo Produto"
         onAction={() => openModal()}
-        loading={loading}
+        loading={false}
         error={error}
       >
-        {products && products.length > 0 && (
+        {loading ? (
+          <TableSkeleton rows={5} columns={6} />
+        ) : products && products.length > 0 ? (
           <Table
             data={products}
             columns={[
@@ -100,6 +102,13 @@ export const ProductsPage: React.FC = () => {
                 )
               }
             ]}
+          />
+        ) : (
+          <EmptyState
+            title="Nenhum produto encontrado"
+            description="Comece criando seu primeiro produto."
+            actionLabel="Criar Primeiro Produto"
+            onAction={() => openModal()}
           />
         )}
 
