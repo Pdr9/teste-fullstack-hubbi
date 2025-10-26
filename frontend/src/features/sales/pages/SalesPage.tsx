@@ -2,10 +2,7 @@ import React, { useEffect, useCallback } from 'react';
 import { Layout } from '@/shared/components/layout/Layout';
 import { PageTemplate, Table, ModalFooter, ItemForm, ErrorDisplay, ActionButtons, TableSkeleton, EmptyState } from '@/shared/components/ui';
 import { Modal } from '@/shared/components/forms/Form';
-import { useCrudPage } from '@/shared/hooks';
-import { useDataLoader } from '@/shared/hooks';
-import { useItemManager } from '@/shared/hooks';
-import { useModal } from '@/shared/hooks';
+import { useCrudPage, useDataLoader, useItemManager, useModal, usePageTitle } from '@/shared/hooks';
 import { saleService } from '../services/saleService';
 import { productService } from '@/features/products/services/productService';
 import { formatCurrency, formatDate } from '@/shared/utils';
@@ -13,6 +10,9 @@ import { Currency, Id, Caption, Body, H4 } from '@/shared/components/ui/Typograp
 import type { CreateSale, CreateItem, Sale } from '../types';
 
 export const SalesPage: React.FC = () => {
+  // Hook para título da página
+  usePageTitle('Vendas - Hubbi');
+
   // Funções estáveis para evitar re-renders desnecessários
   const getSalesWithStatus = useCallback(() => saleService.getSales(true), []);
   const getProducts = useCallback(() => productService.getProducts(), []);

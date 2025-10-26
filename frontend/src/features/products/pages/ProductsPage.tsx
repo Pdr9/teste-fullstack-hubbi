@@ -2,13 +2,16 @@ import React, { useEffect } from 'react';
 import { Layout } from '@/shared/components/layout/Layout';
 import { PageTemplate, Table, ConfirmDialog, ActionButtons, ModalFooter, ErrorDisplay, TableSkeleton, EmptyState } from '@/shared/components/ui';
 import { Modal, Input } from '@/shared/components/forms/Form';
-import { useCrudPage } from '@/shared/hooks';
+import { useCrudPage, usePageTitle } from '@/shared/hooks';
 import { productService } from '../services/productService';
 import { formatCurrency, formatDate } from '@/shared/utils';
 import { Body, Currency, Id, Caption, Label } from '@/shared/components/ui/Typography';
 import type { Product } from '../types';
 
 export const ProductsPage: React.FC = () => {
+  // Hook para título da página
+  usePageTitle('Produtos - Hubbi');
+
   // Hook CRUD
   const {
     data: products,

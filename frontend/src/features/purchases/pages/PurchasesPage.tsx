@@ -3,9 +3,7 @@ import { Layout } from '@/shared/components/layout/Layout';
 import { PageTemplate, Table, ModalFooter, ItemForm, ErrorDisplay, ActionButtons, TableSkeleton, EmptyState } from '@/shared/components/ui';
 import { Modal } from '@/shared/components/forms/Form';
 import { Select } from '@/shared/components/forms/Form';
-import { useDataLoader } from '@/shared/hooks';
-import { useItemManager } from '@/shared/hooks';
-import { useModal } from '@/shared/hooks';
+import { useDataLoader, useItemManager, useModal, usePageTitle } from '@/shared/hooks';
 import { purchaseService } from '../services/purchaseService';
 import { saleService } from '@/features/sales/services/saleService';
 import { productService } from '@/features/products/services/productService';
@@ -15,6 +13,9 @@ import type { CreateItem, Purchase } from '../types';
 import type { Sale } from '@/features/sales/types';
 
 export const PurchasesPage: React.FC = () => {
+  // Hook para título da página
+  usePageTitle('Compras - Hubbi');
+
   const { data: purchases, loading, error, load: loadPurchases } = useDataLoader(purchaseService.getPurchases);
   const { data: sales, load: loadSales } = useDataLoader(saleService.getSales);
   const { data: products, load: loadProducts } = useDataLoader(productService.getProducts);

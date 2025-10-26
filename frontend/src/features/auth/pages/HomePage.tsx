@@ -1,8 +1,12 @@
 import React from 'react';
 import { Layout } from '@/shared/components/layout/Layout';
 import { H1, H2, Body } from '@/shared/components/ui/Typography';
+import { usePageTitle } from '@/shared/hooks';
 
 export const HomePage: React.FC = () => {
+  // Hook para título da página
+  usePageTitle('Dashboard - Hubbi');
+
   return (
     <Layout>
       <div className="space-y-6">
